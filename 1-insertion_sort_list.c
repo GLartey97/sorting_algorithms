@@ -1,82 +1,46 @@
 #include "sort.h"
-
 /**
- * _swap - Swaps two nodes of doubly linked list
- *
- * @node: node base to change
- * @list: double link list head
- *
- * Return: No Return
- */
-void _swap(listint_t **node, listint_t **list)
-{
-	listint_t *tmp = *node, *tmp2, *tmp3;
-
-	if (!(*node)->prev)
-		*list = (*node)->next;
-
-	tmp = tmp3 = *node;
-	tmp2 = tmp->next;
-
-	tmp->next = tmp2->next;
-	tmp3 = tmp->prev;
-	tmp->prev = tmp2;
-	tmp2->next = tmp;
-	tmp2->prev = tmp3;
-
-	if (tmp2->prev)
-		tmp2->prev->next = tmp2;
-
-
-	if (tmp->next)
-		tmp->next->prev = tmp;
-
-	*node = tmp2;
-
-}
-/**
- * insertion_sort_list - sorts a doubly linked list of integers
- * in ascending order using the Insertion sort algorithm
- *
- * @list: doubly linked list
- *
- * Return: No Return
+ * insertion_sort_list - function that sorts a doubly linked list
+ * of integers in ascending order using the Insertion sort algorithm
+ * @list: Dobule linked list to sort
  */
 void insertion_sort_list(listint_t **list)
 {
-	listint_t  *head = *list, *tback, *aux;
+	listint_t *node;
 
-	if (!head || (!(head->prev) && !(head->next)))
+	if (list == NULL || (*list)->next == NULL)
 		return;
-
-	while (head && head->next)
+	node = (*list)->next;
+	while (node)
 	{
-		if (head->n > head->next->n)
+		while ((node->prev) && (node->prev->n > node->n))
 		{
-			aux = head;
-
-			_swap(&aux, list);
+			node = swap_node(node, list);
 			print_list(*list);
-			head = aux;
-			tback = aux;
-
-			while (tback && tback->prev)
-			{
-
-				if (tback->n < tback->prev->n)
-				{
-					aux = tback->prev;
-
-					_swap(&(aux), list);
-
-					print_list(*list);
-					tback = aux->next;
-				}
-
-				tback = tback->prev;
-			}
-
 		}
-		head = head->next;
+		node = node->next;
 	}
+}
+/**
+ *swap_node - swap a node for his previous one
+ *@node: node
+ *@list: node list
+ *Return: return a pointer to a node which was enter it
+ */
+listint_t *swap_node(listint_t *node, listint_t **list)
+{
+	listint_t *back = node->prev, *current = node;
+	/*NULL, 19, 48, 9, 71, 13, NULL*/
+
+	back->next = current->next;
+	if (current->next)
+		current->next->prev = back;
+	current->next = back;
+	current->prev = back->prev;
+	back->prev = current;
+	if (current->prev)
+		current->prev->next = current;
+	else
+		*list = current;
+	return (current);
 }
